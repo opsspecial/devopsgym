@@ -17,6 +17,9 @@ jobs:
             java-version: '17'
             cache: 'maven'
 
-      - name: Test & Build
+      - name: Build & publish
+        env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn -B package --file pom.xml -Djacoco.skip=true -Dsurefire.useFile=false -DdisableXmlReport=true  
+            mvn --settings settings.xml deploy

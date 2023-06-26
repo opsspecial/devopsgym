@@ -86,7 +86,7 @@
         <repository>
             <id>github</id>
             <name>GitHub opsspecial Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com//opsspecial/petclinic</url>
+            <url>https://maven.pkg.github.com/opsspecial/petclinic</url>
         </repository>
     </distributionManagement>
 
