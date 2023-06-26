@@ -1,9 +1,10 @@
-name: Download Maven WAR
-
+name: Deploy App
 on:
-  push:
-    branches:
-      - main
+ workflow_dispatch:
+ workflow_run:
+    workflows: ["Java CI"]
+    types:
+        - completed
 
 jobs:
   download:
@@ -12,7 +13,7 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3 
-          
+
       - name: Download WAR artifact
         env:
           GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
@@ -32,4 +33,4 @@ jobs:
       - name: Display artifact information
         run: |
           ls -l
-          
+          s
