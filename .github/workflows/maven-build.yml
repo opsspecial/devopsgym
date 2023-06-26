@@ -23,9 +23,9 @@ jobs:
           cache: maven
       - name: Build and publish
         env:
-          USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          TOKEN: ${{ secrets.MAVEN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "MAVEN_USERNAME=${USERNAME}" >> $GITHUB_ENV
-          echo "MAVEN_TOKEN=${TOKEN}" >> $GITHUB_ENV
-          mvn deploy
+          mkdir -p ~/.m2
+          echo "<settings><servers><server><id>gh</id><username>$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $1}')</username><password>\${env.GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+          REPO="gh::default::https://maven.pkg.github.com/${GITHUB_REPOSITORY}"
+          mvn deploy -DaltReleaseDeploymentRepository="${REPO}" -DaltSnapshotDeploymentRepository="${REPO}"
