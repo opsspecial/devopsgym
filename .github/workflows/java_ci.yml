@@ -1,0 +1,23 @@
+name: Java CI
+
+on:
+ push:
+   branches: 
+     - main
+
+jobs:
+  BuildApp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 
+
+      - name: Setup jdk
+        uses: actions/setup-java@v3
+        with:
+            distribution: 'adopted' 
+            java-version: '17'
+
+      - name: Test & Build
+        run: |
+          mvn -B package --file pom.xml -Djacoco.skip=true -Dsurefire.useFile=false -DdisableXmlReport=true  
