@@ -1,0 +1,32 @@
+name: Download Maven WAR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  download:
+    runs-on: self-hosted
+
+    steps:
+      - name: Download WAR artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
+          ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          ARTIFACT_NAME=${ARTIFACT_ID}-${VERSION}.war
+          REPO_URL="https://maven.pkg.github.com/opsspecial/petclinic" 
+          ARTIFACT_URL=${REPO_URL}/${GROUP_ID}/${ARTIFACT_ID}/${VERSION}/${ARTIFACT_NAME}
+
+          echo "Downloading artifact from: $ARTIFACT_URL"
+
+          curl -L $ARTIFACT_URL \
+               -H "Authorization: Bearer $GITHUB_TOKEN" \
+               -O 
+      - name: Display artifact information
+        run: |
+          ls -l
+          
