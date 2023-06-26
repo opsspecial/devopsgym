@@ -19,7 +19,12 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 17
-          distribution: 'adopt'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml -Djacoco.skip=true -Dsurefire.useFile=false -DdisableXmlReport=true  
+      - name: Build and publish
+        env:
+          USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          TOKEN: ${{ secrets.MAVEN_TOKEN }}
+        run: |
+          echo "MAVEN_USERNAME=${USERNAME}" >> $GITHUB_ENV
+          echo "MAVEN_TOKEN=${TOKEN}" >> $GITHUB_ENV
+          mvn deploy
