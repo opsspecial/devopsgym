@@ -13,7 +13,7 @@ jobs:
       - name: Setup jdk
         uses: actions/setup-java@v3
         with:
-            distribution: 'adopted' 
+            distribution: 'zulu' 
             java-version: '17'
 
       - name: Test & Build
