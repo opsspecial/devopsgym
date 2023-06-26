@@ -1,0 +1,24 @@
+name: PR
+on:
+ pull_request:
+    types: [opened, reopened, edited, synchronize]
+    branches:
+      
+     - main
+jobs:
+  BuildApp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 
+
+      - name: Setup jdk
+        uses: actions/setup-java@v3
+        with:
+            distribution: 'zulu' 
+            java-version: '17'
+            cache: 'maven'
+
+      - name: Test & Build
+        run: |
+          mvn -B test --file pom.xml -Djacoco.skip=true -Dsurefire.useFile=false -DdisableXmlReport=true  
