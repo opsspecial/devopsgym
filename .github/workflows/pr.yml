@@ -2,11 +2,10 @@ name: PR
 on:
  pull_request:
     types: [opened, reopened, edited, synchronize]
-    branches:
-      
-     - main
+    branches:      
+      - main
 jobs:
-  BuildApp:
+  Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
