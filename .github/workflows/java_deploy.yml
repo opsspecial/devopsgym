@@ -34,6 +34,6 @@ jobs:
           artifact=$(ls -t *.war | head -n 1)
           scp -i $HOME/id_az $artifact azadmin@10.0.1.5:~/
           scp -i $HOME/id_az $artifact azadmin@10.0.1.4:~/
-          ssh -i $HOME/id_az -t azadmin@10.0.1.5 'sudo cp ~/*.war /opt/tomcat/webapps/'
-          ssh -i $HOME/id_az -t azadmin@10.0.1.4 'sudo cp ~/*.war /opt/tomcat/webapps/'
+          ssh -i $HOME/id_az -t azadmin@10.0.1.5 'sudo cp ~/*.war /opt/tomcat8/webapps/'
+          ssh -i $HOME/id_az -t azadmin@10.0.1.4 'sudo cp ~/*.war /opt/tomcat8/webapps/'
           
