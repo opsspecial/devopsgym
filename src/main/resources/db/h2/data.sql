@@ -1,5 +1,5 @@
 INSERT INTO vets VALUES (default, 'James', 'Carter');
-INSERT INTO vets VALUES (default, 'Helen', 'Leary');
+INSERT INTO vets VALUES (default, 'Elena', 'Leary');
 INSERT INTO vets VALUES (default, 'Linda', 'Douglas');
 INSERT INTO vets VALUES (default, 'Rafael', 'Ortega');
 INSERT INTO vets VALUES (default, 'Henry', 'Stevens');
