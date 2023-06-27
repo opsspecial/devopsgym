@@ -6,7 +6,7 @@ on:
      - main
 jobs:
   BuildApp:
-    runs-on: ubuntu-latest
+    runs-on: java-deploy
     steps:
       - name: Checkout code
         uses: actions/checkout@v3 
