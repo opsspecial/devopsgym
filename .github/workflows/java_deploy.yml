@@ -30,7 +30,7 @@ jobs:
           cp ${ARTIFACT_NAME} $HOME/petclinic/
       - name: Upload Artifact to the target servers
         run: |
-          cd $HOME
+          cd $HOME/petclinic
           artifact=$(ls -t *.war | head -n 1)
           scp -i id_az $artifact azadmin@10.0.1.5:/opt/tomcat8/webapps/
           scp -i id_az $artifact azadmin@10.0.1.4:/opt/tomcat8/webapps/
