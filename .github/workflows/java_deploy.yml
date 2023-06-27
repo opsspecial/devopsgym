@@ -2,7 +2,7 @@ name: Deploy App
 on:
  workflow_dispatch:
  workflow_run:
-    workflows: [" "]
+    workflows: ["Java CI"]
     types:
         - completed
 
