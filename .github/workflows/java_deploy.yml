@@ -28,12 +28,32 @@ jobs:
                -H "Authorization: Bearer $GITHUB_TOKEN" \
                -O
           cp ${ARTIFACT_NAME} $HOME/petclinic/
+      
+      - name: Set up Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: List VM IP Addresses
+        id: inventory
+        run: |
+          # Set the desired resource group and prefix
+          resourceGroup="petclinic-rg"
+          vmPrefix="web"
+          # Get the VM names matching the prefix
+          vms=$(az vm list -g $resourceGroup --query "[?starts_with(name, '$vmPrefix')].name" -o tsv)
+          echo vms
+          echo "VMs=$vms" >> $GITHUB_OUTPUT
+
       - name: Upload Artifact to the target servers
+        env:
+          vms: ${{ steps.inventory.outputs.VMs }} 
         run: |
           cd $HOME/petclinic
           artifact=$(ls -t *.war | head -n 1)
-          scp -i $HOME/id_az $artifact azadmin@10.0.1.5:~/
-          scp -i $HOME/id_az $artifact azadmin@10.0.1.4:~/
-          ssh -i $HOME/id_az -t azadmin@10.0.1.5 'sudo cp ~/*.war /opt/tomcat8/webapps/'
-          ssh -i $HOME/id_az -t azadmin@10.0.1.4 'sudo cp ~/*.war /opt/tomcat8/webapps/'
-          
+          for vmName in $vms
+          do
+            ip=$(az vm show -g $resourceGroup -n $vmName --query "publicIps" -o tsv) 
+            scp -i $HOME/id_az $artifact azadmin@$ip:~/petclicnic.war
+            ssh -i $HOME/id_az -t azadmin@$ip 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
+          done
