@@ -17,6 +17,7 @@ jobs:
         run: |
           /home/azadmin/maven/bin/mvn --version
           echo "/home/azadmin/maven/bin/" >> $GITHUB_PATH;
+          mvn --version
 
 
 
