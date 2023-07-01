@@ -40,19 +40,14 @@ jobs:
           resourceGroup="petclinic-rg"
           vmPrefix="web"
           # Get the VM names matching the prefix
-          vms=$(az vm list -g $resourceGroup --query "[?starts_with(name, '$vmPrefix')].name" -o tsv)
-          echo vms
-          echo "VMs=$vms" >> $GITHUB_OUTPUT
-
+          az vm list --resource-group petclinic-rg --show-details --query "[?contains(name, 'web')].[privateIps]" -otsv > /tmp/vms.txt
+          
       - name: Upload Artifact to the target servers
-        env:
-          vms: ${{ steps.inventory.outputs.VMs }} 
         run: |
           cd $HOME/petclinic
           artifact=$(ls -t *.war | head -n 1)
-          for vmName in $vms
+          while read vm 
           do
-            ip=$(az vm show -g $resourceGroup -n $vmName --query "publicIps" -o tsv) 
-            scp -i $HOME/id_az $artifact azadmin@$ip:~/petclicnic.war
-            ssh -i $HOME/id_az -t azadmin@$ip 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
-          done
+            scp -i $HOME/id_az $artifact azadmin@$vm:~/petclicnic.war
+            ssh -i $HOME/id_az -t azadmin@$vm 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
+          done< /tmp/vms.txt
