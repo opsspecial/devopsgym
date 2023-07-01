@@ -52,7 +52,7 @@ jobs:
           while read vm 
           do
             echo "Copy Artifcat to $vm"
-            scp -i $HOME/id_az $artifact azadmin@$vm:~/petclicnic.war
-            ssh -i $HOME/id_az azadmin@$vm 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
+            scp -i $HOME/id_az $artifact azadmin@$vm:~/petclinic.war
+            ssh -i $HOME/id_az azadmin@$vm -T 'sudo cp ~/petclinic.war /opt/tomcat8/webapps/'  < /dev/null          
             echo "Completd Copying to $vm"
           done< /tmp/vms.txt
