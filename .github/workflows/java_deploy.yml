@@ -15,11 +15,10 @@ jobs:
 
       - name: setup maven
         run: |
-          ln -s /usr/share/apache-maven-3.9.3/bin/mvn /usr/bin/mvn
           echo "M2_HOME=/usr/share/apache-maven-3.9.3" | tee -a /etc/environment 
           echo "/usr/share/apache-maven-3.9.3/bin/" >> $GITHUB_PATH
           mvn --version
-          
+
       - name: Download WAR artifact
         env:
           GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
