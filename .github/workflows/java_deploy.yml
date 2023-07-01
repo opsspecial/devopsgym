@@ -40,8 +40,10 @@ jobs:
           resourceGroup="petclinic-rg"
           vmPrefix="web"
           # Get the VM names matching the prefix
-          az vm list --resource-group petclinic-rg --show-details --query "[?contains(name, 'web')].[privateIps]" -otsv > /tmp/vms.txt
-          
+          az vm list --resource-group petclinic-rg --show-details \
+          --query "[?contains(name, 'web')].[privateIps]" -otsv > /tmp/vms.txt
+          cat /tmp/vms.txt
+
       - name: Upload Artifact to the target servers
         run: |
           cd $HOME/petclinic
@@ -49,6 +51,8 @@ jobs:
           echo $artifact
           while read vm 
           do
+            echo "Copy Artifcat to $vm"
             scp -i $HOME/id_az $artifact azadmin@$vm:~/petclicnic.war
-            ssh -i $HOME/id_az -T azadmin@$vm 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
+            ssh -i $HOME/id_az azadmin@$vm 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
+            echo "Completd Copying to $vm"
           done< /tmp/vms.txt
