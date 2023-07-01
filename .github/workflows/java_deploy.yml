@@ -46,8 +46,9 @@ jobs:
         run: |
           cd $HOME/petclinic
           artifact=$(ls -t *.war | head -n 1)
+          echo $artifact
           while read vm 
           do
             scp -i $HOME/id_az $artifact azadmin@$vm:~/petclicnic.war
-            ssh -i $HOME/id_az -t azadmin@$vm 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
+            ssh -i $HOME/id_az -T azadmin@$vm 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
           done< /tmp/vms.txt
