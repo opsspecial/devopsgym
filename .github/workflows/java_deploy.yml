@@ -13,11 +13,18 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3 
 
+      - name: Setup jdk
+        uses: actions/setup-java@v3
+        with:
+            distribution: 'zulu' 
+            java-version: '17'
+
       - name: setup maven
         run: |
           echo "M2_HOME=/usr/share/apache-maven-3.9.3" | sudo tee -a /etc/environment 
           echo "/usr/share/apache-maven-3.9.3/bin/" >> $GITHUB_PATH
           mvn --version
+
 
       - name: Download WAR artifact
         env:
