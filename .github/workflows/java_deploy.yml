@@ -13,17 +13,11 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3 
 
-      - name: Setup jdk
-        uses: actions/setup-java@v3
-        with:
-            distribution: 'zulu' 
-            java-version: '17'
-
       - name: setup maven
         run: |
-          echo "M2_HOME=/usr/share/apache-maven-3.9.3" | sudo tee -a /etc/environment 
-          echo "/usr/share/apache-maven-3.9.3/bin/" >> $GITHUB_PATH
-          mvn --version
+          /home/azadmin/maven/bin/mvn --version
+          echo "/home/azadmin/maven/bin/" >> $GITHUB_PATH;
+
 
 
       - name: Download WAR artifact
@@ -31,9 +25,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
         run: |
           mkdir -p $HOME/petclinic/
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-          ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          VERSION=$(/home/azadmin/maven/bin/mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          GROUP_ID=$(/home/azadmin/maven/bin/mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
+          ARTIFACT_ID=$(/home/azadmin/maven/bin/mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           ARTIFACT_NAME=${ARTIFACT_ID}-${VERSION}.war
           REPO_URL="https://maven.pkg.github.com/opsspecial/petclinic" 
           ARTIFACT_URL=${REPO_URL}/${GROUP_ID}/${ARTIFACT_ID}/${VERSION}/${ARTIFACT_NAME}
@@ -71,3 +65,6 @@ jobs:
             scp -i $HOME/id_az $artifact azadmin@$ip:~/petclicnic.war
             ssh -i $HOME/id_az -t azadmin@$ip 'sudo cp ~/petclicnic.war /opt/tomcat8/webapps/'           
           done
+
+      - name: check mvn version
+        run: mvn --version
