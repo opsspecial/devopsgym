@@ -1,4 +1,4 @@
-name: Java CI
+name: Build App
 on:
  workflow_dispatch: 
  push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   BuildApp:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v3 
@@ -20,10 +20,7 @@ jobs:
         with:
             distribution: 'zulu' 
             java-version: '17'
-      - name: Build & publish
-        env:
-          GITHUB_USERNAME: x-access-token
-          GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
+      - name: Build 
         run: |
             mvn clean install
 
