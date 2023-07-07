@@ -17,13 +17,15 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <plugins> 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.2</version>
-      </plugin>
-   </plugins>
+    <plugins>
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <version>3.3.3</version>
+    <configuration>
+      <warName>${project.artifactId}-${project.version}</warName>
+    </configuration>
+  </plugin>
+  </plugins>
   </build>
 </project>
