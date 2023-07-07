@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3 
+
+
+
       - name: Download WAR artifact
         env:
           GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
@@ -43,7 +46,11 @@ jobs:
           az vm list --resource-group petclinic-rg --show-details \
           --query "[?contains(name, 'web')].[privateIps]" -otsv > /tmp/vms.txt
           cat /tmp/vms.txt
-
+      - name: Download Private Key
+        env:
+          private_key_data: ${{ secrets.PRIVATE_KEY }}
+        run: |
+            echo $private_key_data | base64 -d > $HOME/privatekey.pem
       - name: Upload Artifact to the target servers
         run: |
           cd $HOME/petclinic
@@ -52,7 +59,7 @@ jobs:
           while read vm 
           do
             echo "Copy Artifcat to $vm"
-            scp -i $HOME/id_az $artifact azadmin@$vm:~/petclinic.war
-            ssh -i $HOME/id_az azadmin@$vm -T 'sudo cp ~/petclinic.war /opt/tomcat8/webapps/'  < /dev/null          
+            scp -i $HOME/privatekey.pem $artifact azadmin@$vm:~/petclinic.war
+            ssh -i $HOME/privatekey.pem azadmin@$vm -T 'sudo cp ~/petclinic.war /opt/tomcat8/webapps/'  < /dev/null          
             echo "Completd Copying to $vm"
           done< /tmp/vms.txt
