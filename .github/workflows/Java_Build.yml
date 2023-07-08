@@ -36,7 +36,8 @@ jobs:
 
   release:
       runs-on: ubuntu-latest
-  
+      permissions: write-all
+      name: GITHUB_TOKEN
       steps:
         - name: Checkout code
           uses: actions/checkout@v2

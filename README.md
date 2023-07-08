@@ -1,13 +1,10 @@
-<h1 align="center">
-  <img alt="pipeline diagram" src="./docs/images/pipeline.png" width="100%"/><br/>
-  CI/CD Pipeline for Java Webapp
-</h1>
-<p align="center">Create a <b>Continuous Integration/Continuous Deployment</b> pipeline to deploy a simple Java web application.<br/>Focus on automation of the process for <b>DevOps</b>.</p>
+
+<p align="center">Create a <b>Continuous Integration/Continuous Deployment</b> pipeline to deploy a simple Java web application.<br/>Focus on GitHub Actions <b>DevOps</b>.</p>
 
 
-![Build App](https://github.com/opsspecial/devopsgym/actions/workflows/build_app.yml/badge.svg)
+![Build App](https://github.com/opsspecial/devopsgym/actions/workflows/Java_Build.yml/badge.svg)
 
-<a href="https://www.docker.com/" target="_blank"><img src="https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>&nbsp;a></p><a href="https://www.docker.com/" target="_blank"><img src="https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>&nbsp;a></p>
+</p><a href="https://www.docker.com/" target="_blank"><img src="https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>&nbsp;</p>
 
 <p align="center">
     <b>LANGUAGE</b>
