@@ -32,4 +32,52 @@ jobs:
         run: |
           docker build . -t specialops/devopsgym:$GITHUB_RUN_NUMBER
           docker push specialops/devopsgym:$GITHUB_RUN_NUMBER
-      
+          name: Semantic Release
+
+  release:
+      runs-on: ubuntu-latest
+  
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+  
+        - name: Determine release version
+          id: determine_version
+          run: |
+            COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+            if [[ $COMMIT_MESSAGE == *"BREAKING"* ]]; then
+              echo "::set-output name=version::major"
+            elif [[ $COMMIT_MESSAGE == *"FEATURE"* ]]; then
+              echo "::set-output name=version::minor"
+            elif [[ $COMMIT_MESSAGE == *"PATCH"* || $COMMIT_MESSAGE == *"DEPENDENCY"* ]]; then
+              echo "::set-output name=version::patch"
+            else
+              echo "::set-output name=version::none"
+            fi
+  
+        - name: Create Release
+          id: create_release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ github.ref }}
+            release_name: Release ${{ github.ref }}
+            body: |
+              Release ${{ github.ref }}
+              Auto-generated release notes.
+  
+        - name: Generate Tag
+          if: steps.determine_version.outputs.version != 'none'
+          run: |
+            TAG_VERSION=$(echo ${{ github.ref }} | cut -d '/' -f 3)
+            if [[ steps.determine_version.outputs.version == 'major' ]]; then
+              NEW_VERSION=$(semver bump major $TAG_VERSION)
+            elif [[ steps.determine_version.outputs.version == 'minor' ]]; then
+              NEW_VERSION=$(semver bump minor $TAG_VERSION)
+            else
+              NEW_VERSION=$(semver bump patch $TAG_VERSION)
+            fi
+            echo "TAG=${{ github.ref }}/v${NEW_VERSION}" >> $GITHUB_ENV
+            echo $TAG
+        
