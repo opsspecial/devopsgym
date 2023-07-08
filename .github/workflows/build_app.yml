@@ -31,4 +31,5 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build . -t specialops/devopsgym:$GITHUB_RUN_ID
+          docker push specialops/devopsgym:$GITHUB_RUN_ID
       
