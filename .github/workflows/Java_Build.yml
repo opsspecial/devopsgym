@@ -1,4 +1,4 @@
-name: Build App
+name: Build & Publish
 on:
  workflow_dispatch: 
  push:
@@ -30,6 +30,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Docker Image
         run: |
-          docker build . -t specialops/devopsgym:$GITHUB_RUN_ID
-          docker push specialops/devopsgym:$GITHUB_RUN_ID
+          docker build . -t specialops/devopsgym:$GITHUB_RUN_NUMBER
+          docker push specialops/devopsgym:$GITHUB_RUN_NUMBER
       
