@@ -67,23 +67,18 @@
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
-            <h2>Jenkins</h2>
-            <p>Declarative pipelines for the automation CICD</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
             <h2>Git,Maven and GitHub</h2>
             <p>Git for version controlling. Maven as a build tool (Jenkins plugin). GitHub as source code repository </p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
-            <h2>Nexus</h2>
-            <p>Nexus3 as maven repository manager. Jenkins will publish the artifacts to Nexus after succesful build </p>
+            <h2>GitHub Actions</h2>
+            <p>GitHub actions to Build and Deploy Pipelines </p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
             <h2>Ansible</h2>
-            <p>Using Ansible as Jenkins SSH Server to pull artifacts from Nexus and deploy to Dockerhost (build image, run container)</p>
+            <p>Ansible for Software Configuration Management</p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
     </div>
