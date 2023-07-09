@@ -13,14 +13,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Setup jdk
-        uses: actions/setup-java@v3
-        with:
-            distribution: 'zulu' 
-            java-version: '17'
-      - name: run tests
-        run: |
-            mvn test
+      # - name: Setup jdk
+      #   uses: actions/setup-java@v3
+      #   with:
+      #       distribution: 'zulu' 
+      #       java-version: '17'
+      # - name: run tests
+      #   run: |
+      #       mvn test
       - name: Install semver
         run: npm install --global semver
       - name: Determine current version
@@ -28,19 +28,19 @@ jobs:
         run: |
           VERSION=$(git describe --abbrev=0 --tags)
           echo "::set-output name=current_version::$VERSION"
-
       - name: Determine bump type
         id: bump_type
         run: |
           COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
           if [[ $COMMIT_MSG =~ BREAKING|Breaking|breaking ]]; then
-            echo "bump_type=major" >> $GITHUB_OUTPUT
+            "bump_type=major" 
           elif [[ $COMMIT_MSG =~ FEAT|feat ]]; then
-            echo "bump_type=minor" >> $GITHUB_OUTPUT
+            "bump_type=minor" 
           else
-            echo "bump_type=patch" >> $GITHUB_OUTPUT
+            "bump_type=patch" 
           fi
           echo "bump_type for this commit is $bump_type"
+          echo "bump_type=$bump_type" >> $GIHUB_OUTPUT
       - name: Generate new version
         id: new_version
         run: |
