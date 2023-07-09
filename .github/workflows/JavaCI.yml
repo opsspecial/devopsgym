@@ -91,6 +91,8 @@ jobs:
     env:
       tag: ${{ needs.release.outputs.tag}}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - name: Download WAR artifact
         env:
           GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
