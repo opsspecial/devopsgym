@@ -49,11 +49,11 @@ jobs:
           CURRENT_VERSION="${{ steps.version.outputs.current_version }}"
           BUMP_TYPE="${{ steps.bump_type.outputs.bump_type }}"
           if [[ $BUMP_TYPE == "major" ]]; then
-            NEW_VERSION=$(semver bump major "$CURRENT_VERSION")
+            NEW_VERSION=$(semver -i major "$CURRENT_VERSION")
           elif [[ $BUMP_TYPE == "minor" ]]; then
-            NEW_VERSION=$(semver bump minor "$CURRENT_VERSION")
+            NEW_VERSION=$(semver-i minor "$CURRENT_VERSION")
           else
-            NEW_VERSION=$(semver bump patch "$CURRENT_VERSION")
+            NEW_VERSION=$(semver -i patch "$CURRENT_VERSION")
           fi
           echo "::set-output name=new_version::$NEW_VERSION"
           echo $NEW_VERSION
