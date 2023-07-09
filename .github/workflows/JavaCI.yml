@@ -8,12 +8,12 @@ jobs:
   create_tag:
     runs-on: ubuntu-latest
     permissions: write-all
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
       - name: Install semver
         run: npm install --global semver
 
@@ -22,15 +22,32 @@ jobs:
         run: |
           VERSION=$(git describe --abbrev=0 --tags)
           echo "::set-output name=current_version::$VERSION"
-          echo $current_version
+
+      - name: Determine bump type
+        id: bump_type
+        run: |
+          COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
+          if [[ $COMMIT_MSG =~ BREAKING|Breaking|breaking ]]; then
+            echo "::set-output name=bump_type::major"
+          elif [[ $COMMIT_MSG =~ FEAT|feat ]]; then
+            echo "::set-output name=bump_type::minor"
+          else
+            echo "::set-output name=bump_type::patch"
+          fi
 
       - name: Generate new version
         id: new_version
         run: |
           CURRENT_VERSION="${{ steps.version.outputs.current_version }}"
-          NEW_VERSION=$(semver bump patch "$CURRENT_VERSION")
+          BUMP_TYPE="${{ steps.bump_type.outputs.bump_type }}"
+          if [[ $BUMP_TYPE == "major" ]]; then
+            NEW_VERSION=$(semver bump major "$CURRENT_VERSION")
+          elif [[ $BUMP_TYPE == "minor" ]]; then
+            NEW_VERSION=$(semver bump minor "$CURRENT_VERSION")
+          else
+            NEW_VERSION=$(semver bump patch "$CURRENT_VERSION")
+          fi
           echo "::set-output name=new_version::$NEW_VERSION"
-          echo $new_version
 
       - name: Create tag
         run: |
