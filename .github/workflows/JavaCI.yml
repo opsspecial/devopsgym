@@ -40,7 +40,7 @@ jobs:
             export bump_type=patch 
           fi
           echo "bump_type for this commit is $bump_type"
-          echo "bump_type=$bump_type" >> $GIHUB_OUTPUT
+          echo "bump_type=$bump_type" >> $GITHUB_OUTPUT
       - name: Generate new version
         id: new_version
         run: |
