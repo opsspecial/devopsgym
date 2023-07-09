@@ -43,7 +43,7 @@ jobs:
         id: generate-tag
         uses: K-Phoen/semver-release-action@master
         with:
-          release_branch: master
+          release_branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
