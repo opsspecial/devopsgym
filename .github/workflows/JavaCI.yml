@@ -36,7 +36,7 @@ jobs:
           fi
       - name: Check values
         env:
-          bump_type: ${{ stpes.bump_type.outputs.bump_type }}
+          bump_type: ${{ steps.bump_type.outputs.bump_type }}
           currentver: ${{ steps.version.outputs.current_version }}
         run:
             echo "Bump type is $bump_type"
