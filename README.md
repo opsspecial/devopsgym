@@ -6,13 +6,6 @@
 
 </p><a href="https://www.docker.com/" target="_blank"><img src="https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>&nbsp;</p>
 
-<p align="center">
-    <b>LANGUAGE</b>
-</p>
-<p align="center">
-    <a href="README.md"><img src="/docs/images/us.png" width="25"></a>
-    <a href="README-vi.md"><img src="/docs/images/vi.png" width="25"></a>
-</p>
 
 
 ## ⚡️ Overview

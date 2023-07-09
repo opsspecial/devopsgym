@@ -28,4 +28,11 @@
   </plugin>
   </plugins>
   </build>
+  <distributionManagement>
+   <repository>
+     <id>github</id>
+     <name>GitHub opsspecial Apache Maven Packages</name>
+     <url>https://maven.pkg.github.com/opsspecial/devopsgym</url>
+   </repository>
+  </distributionManagement>
 </project>
