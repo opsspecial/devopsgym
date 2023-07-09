@@ -86,7 +86,7 @@ jobs:
       tag: ${{ steps.new_version.outputs.new_version }}     
 
   publishimage:
-    runs-on: ubutnu-latest
+    runs-on: ubuntu-latest
     needs: release
     env:
       tag: ${{ needs.release.outputs.tag}}
