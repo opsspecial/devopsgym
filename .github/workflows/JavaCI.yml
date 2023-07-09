@@ -22,7 +22,6 @@ jobs:
         run: |
           VERSION=$(git describe --abbrev=0 --tags)
           echo "::set-output name=current_version::$VERSION"
-          echo $current_version
 
       - name: Determine bump type
         id: bump_type
@@ -35,7 +34,14 @@ jobs:
           else
             echo "::set-output name=bump_type::patch"
           fi
-          echo $bump_type
+      - name: Check values
+        env:
+          bump_type: ${{ stpes.bump_type.outputs.bump_type }}
+          currentver: ${{ steps.version.outputs.current_version }}
+        run:
+            echo "Bump type is $bump_type"
+            echo "Current Version is $currentver"
+
 
       - name: Generate new version
         id: new_version
