@@ -56,6 +56,7 @@ jobs:
             NEW_VERSION=$(semver bump patch "$CURRENT_VERSION")
           fi
           echo "::set-output name=new_version::$NEW_VERSION"
+          echo $NEW_VERSION
 
       - name: Create tag
         run: |
