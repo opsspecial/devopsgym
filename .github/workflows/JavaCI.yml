@@ -8,10 +8,11 @@ jobs:
   create_tag:
     runs-on: ubuntu-latest
     permissions: write-all
-    name: GITHUB_TOKEN
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Install semver
         run: npm install --global semver
