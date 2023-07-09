@@ -34,17 +34,7 @@ jobs:
           else
             echo "::set-output name=increment::none"
           fi
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.previoustag.outputs.tag }}
-          release_name: Release ${{ github.ref_name }}
-          body: |
-            Release ${{ github.ref }}
-            Auto-generated release notes.
+
 
       - name: Generate Tag
         id: generate_tag
@@ -68,10 +58,22 @@ jobs:
                 PATCH=$((PATCH + 1))
               fi
               TAG="$MAJOR.$MINOR.$PATCH"
-              echo "TAG=$TAG" >> $GITHUB_ENV
+              echo "TAG=$TAG" >> $GITHUB_OUTPUT
+              echo $TAG
             fi
           fi
-  
+      - name: Create Release
+        if: success()
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.previoustag.outputs.tag }}
+          release_name: Release ${{ steps.generate_tag.outputs.TAG }}
+          body: |
+            Release ${{ github.ref }}
+            Auto-generated release notes.    
   # BuildApp:
   #   runs-on: ubuntu-22.04
   #   steps:
