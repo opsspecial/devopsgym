@@ -1,4 +1,4 @@
-name: Build & Publish
+name: Continuous Integration
 on:
  workflow_dispatch: 
  push:
@@ -33,6 +33,11 @@ jobs:
           fi
         env:
           COMMIT_SHA: ${{ github.sha }}
+      - name: Print Tag
+        env:
+          TAG: ${{ steps.determine_bump.outputs.version_tag }}
+        run: |
+          echo $TAG       
 
       - name: Create Release
         id: create_release
