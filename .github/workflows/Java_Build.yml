@@ -38,30 +38,11 @@ jobs:
     needs: BuildApp
     permissions: write-all
     name: GITHUB_TOKEN
+    if: github.event.pull_request.merged   
     steps:
-      - uses: actions/checkout@v2
+      - name: Tag
+        uses: K-Phoen/semver-release-action@master
         with:
-          fetch-depth: 0
-      - name: Generate branch diff file
-        if: success()
-        run: |
-          echo "Head branch: ${GITHUB_HEAD_REF}"
-          echo "Base branch: ${GITHUB_BASE_REF}"
-          git log origin/${GITHUB_BASE_REF}..origin/${GITHUB_HEAD_REF} > ./branch-diff.txt
-      - name: Extract previous version
-        if: success()
-        run: |
-          export PREVIOUS_VERSION=$(git describe --tags --abbrev=0)
-          echo "Previous version: ${PREVIOUS_VERSION}"
-          echo "PREVIOUS_VERSION=${TAG}" > ${GITHUB_ENV}
-      - name: Generate version number
-        id: generate
-        if: success()
-        uses: juztcode/generate-semver@1.0.0
-        with:
-          branch-diff-file: ./branch-diff.txt
-          previous-version: ${{ env.PREVIOUS_VERSION }}
-
-      - name: Print version
-        if: success()
-        run: echo ${{ steps.generate.outputs.generated-version }}
+          release_branch: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
