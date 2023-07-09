@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  publish-image:
+  build-publish:
     permissions: write-all
     runs-on: ubuntu-22.04
     steps:
@@ -27,7 +27,7 @@ jobs:
         id: version
         run: |
           VERSION=$(git describe --abbrev=0 --tags)
-          echo "::set-output name=current_version::$VERSION"
+          echo "current_version=$VERSION" >> $GITHUB_OUTPUT
       - name: Determine bump type
         id: bump_type
         run: |
@@ -42,9 +42,10 @@ jobs:
           echo "bump_type for this commit is $bump_type"
           echo "bump_type=$bump_type" >> $GITHUB_OUTPUT
       - name: Generate new version
+        env:
+          CURRENT_VERSION: "${{ steps.version.outputs.current_version }}" 
         id: new_version
         run: |
-          CURRENT_VERSION="${{ steps.version.outputs.current_version }}"
           BUMP_TYPE="${{ steps.bump_type.outputs.bump_type }}"
           if [[ $BUMP_TYPE == "major" ]]; then
             NEW_VERSION=$(semver -i major "$CURRENT_VERSION")
@@ -72,15 +73,14 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Docker Image
         env:
-          USERNAME: 'specialops'
-          IMAGEREPO: 'devopsgym'
+          NEW_TAG: ${{ steps.new_version.outputs.NEW_TAG }}
         run: |
-          docker build . -t $USERNAME/$IMAGEREPO:$NEW_TAG
-          docker push $USERNAME/$IMAGEREPO:$NEW_TAG
+          docker build . -t specialops/devopsgym:$NEW_TAG
+          docker push specialops/devopsgym:$NEW_TAG
   
   # release:
   #   runs-on: ubuntu-latest
