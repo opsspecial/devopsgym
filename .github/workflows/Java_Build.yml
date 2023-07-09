@@ -30,6 +30,10 @@ jobs:
           title: ${{ steps.semvers.outputs.patch }}
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: print tag
+        env:
+          OUTPUT: ${{ steps.createmilestone.outputs }}
+        run: echo $OUTPUT
   # BuildApp:
   #   runs-on: ubuntu-22.04
   #   steps:
