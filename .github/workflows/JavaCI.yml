@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  buildapp:
+  run-tests:
       runs-on: ubuntu-22.04
       steps:
         - name: Checkout code
@@ -21,7 +21,7 @@ jobs:
             GITHUB_USERNAME: x-access-token
             GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
           run: |
-              mvn --settings settings.xml release:prepare release:perform
+              mvn test
         
   release:
     runs-on: ubuntu-latest
@@ -84,6 +84,43 @@ jobs:
           prerelease: false
     outputs: 
       tag: ${{ steps.new_version.outputs.new_version }}     
+
+  build-app:
+    runs-on: ubuntu-22.04
+    needs: release
+    env:
+      version: ${{ needs.release.outputs.tag}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 
+
+      - name: Setup jdk
+        uses: actions/setup-java@v3
+        with:
+            distribution: 'zulu' 
+            java-version: '17'
+      - name: Build and Publish war
+        env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
+        run: |
+          mvn versions:set -DnewVersion=$version
+          mvn --settings settings.xml deploy 
+
+      - name: Commit Version Change
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add pom.xml
+          git commit -m "Update version to $version"
+
+      - name: Push Changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+  
+       
+
 
   publishimage:
     runs-on: ubuntu-latest
