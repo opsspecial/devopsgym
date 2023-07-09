@@ -18,15 +18,11 @@ jobs:
         with:
             distribution: 'zulu' 
             java-version: '17'
-      - name: Build war
-        env:
-          GITHUB_USERNAME: x-access-token
-          GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
+      - name: run tests
         run: |
-            mvn tests
+            mvn test
       - name: Install semver
         run: npm install --global semver
-
       - name: Determine current version
         id: version
         run: |
