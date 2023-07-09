@@ -1,64 +1,38 @@
-name: Continuous Integration
+name: Create Semantic Version Tags
 on:
- workflow_dispatch: 
- push:
-   branches: 
-     - main
-   paths:
-    - src/**
-    - pom.xml
+  push:
+    branches:
+      - main
 
 jobs:
-  release:
+  create_tag:
     runs-on: ubuntu-latest
     permissions: write-all
     name: GITHUB_TOKEN
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Determine version bump
-        id: determine_bump
-        run: |
-          MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
-          if [[ $MESSAGE =~ BREAKING ]]; then
-            echo "MAJOR"
-          elif [[ $MESSAGE =~ FEATURE ]]; then
-            echo "MINOR"
-          elif [[ $MESSAGE =~ PATCH|DEPENDENCY ]]; then
-            echo "PATCH"
-          else
-            echo "NO_CHANGE"
-          fi
-        env:
-          COMMIT_SHA: ${{ github.sha }}
-      - name: Print Tag
-        env:
-          TAG: ${{ steps.determine_bump.outputs.version_tag }}
-        run: |
-          echo $TAG       
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.determine_bump.outputs.version_tag }}
-          release_name: Release ${{ steps.determine_bump.outputs.version_tag }}
-          body: |
-            Release ${{ steps.determine_bump.outputs.version_tag }}
-            Auto-generated release notes.
+      - name: Install semver
+        run: npm install --global semver
 
-      - name: Generate Tag
+      - name: Determine current version
+        id: version
         run: |
-          echo "TAG=${{ steps.determine_bump.outputs.version_tag }}" >> $GITHUB_ENV
+          VERSION=$(git describe --abbrev=0 --tags)
+          echo "::set-output name=current_version::$VERSION"
+          echo $current_version
 
-      - name: Push Tag
-        if: steps.determine_bump.outputs.version_tag != 'NO_CHANGE'
+      - name: Generate new version
+        id: new_version
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag ${{ steps.determine_bump.outputs.version_tag }} $COMMIT_SHA
-          git push origin ${{ steps.determine_bump.outputs.version_tag }}
+          CURRENT_VERSION="${{ steps.version.outputs.current_version }}"
+          NEW_VERSION=$(semver bump patch "$CURRENT_VERSION")
+          echo "::set-output name=new_version::$NEW_VERSION"
+          echo $new_version
+
+      - name: Create tag
+        run: |
+          NEW_TAG="${{ steps.new_version.outputs.new_version }}"
+          git tag "$NEW_TAG"
+          git push origin "$NEW_TAG"
