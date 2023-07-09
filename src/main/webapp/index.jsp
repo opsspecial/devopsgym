@@ -52,7 +52,7 @@
 <div class="jumbotron">
     <div class="container">
         <h1>Welcome</h1>
-        <p>Gym for DevOps Engineers</p>
+        <p>Gym for DevOps </p>
         <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
         <p><a class="btn btn-primary btn-lg" role="button">Success!! more &raquo;</a></p>
     </div>
