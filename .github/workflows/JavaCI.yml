@@ -1,0 +1,59 @@
+name: Build & Publish
+on:
+ workflow_dispatch: 
+ push:
+   branches: 
+     - main
+   paths:
+    - src/**
+    - pom.xml
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    name: GITHUB_TOKEN
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Determine version bump
+        id: determine_bump
+        run: |
+          MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+          if [[ $MESSAGE =~ BREAKING ]]; then
+            echo "MAJOR"
+          elif [[ $MESSAGE =~ FEATURE ]]; then
+            echo "MINOR"
+          elif [[ $MESSAGE =~ PATCH|DEPENDENCY ]]; then
+            echo "PATCH"
+          else
+            echo "NO_CHANGE"
+          fi
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.determine_bump.outputs.version_tag }}
+          release_name: Release ${{ steps.determine_bump.outputs.version_tag }}
+          body: |
+            Release ${{ steps.determine_bump.outputs.version_tag }}
+            Auto-generated release notes.
+
+      - name: Generate Tag
+        run: |
+          echo "TAG=${{ steps.determine_bump.outputs.version_tag }}" >> $GITHUB_ENV
+
+      - name: Push Tag
+        if: steps.determine_bump.outputs.version_tag != 'NO_CHANGE'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag ${{ steps.determine_bump.outputs.version_tag }} $COMMIT_SHA
+          git push origin ${{ steps.determine_bump.outputs.version_tag }}
