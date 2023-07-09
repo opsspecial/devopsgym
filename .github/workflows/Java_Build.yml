@@ -11,6 +11,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions: write-all
+    name: GITHUB_TOKEN
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
