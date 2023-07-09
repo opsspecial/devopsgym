@@ -50,13 +50,37 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
             fallback: 1.0.0  
+
+        - name: Determine release version
+          id: determine_version
+          run: |
+            COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{ github.sha }})
+            if [[ $COMMIT_MESSAGE == *"BREAKING"* ]]; then
+              echo "::set-output name=version::major"
+            elif [[ $COMMIT_MESSAGE == *"FEATURE"* ]]; then
+              echo "::set-output name=version::minor"
+            elif [[ $COMMIT_MESSAGE == *"PATCH"* || $COMMIT_MESSAGE == *"DEPENDENCY"* ]]; then
+              echo "::set-output name=version::patch"
+            else
+              echo "::set-output name=version::none"
+            fi
   
-        - name: Get next minor version
-          id: semver
-          uses: 'WyriHaximus/github-action-next-semvers@v1'
-          with:
-            version: ${{ steps.previoustag.outputs.tag }}
   
+        - name: Generate Tag          
+          if: steps.determine_version.outputs.version != 'none'
+          run: |
+            TAG_VERSION=$(echo ${{ github.ref }} | cut -d '/' -f 3)
+            echo
+            if [[ steps.determine_version.outputs.version == 'major' ]]; then
+              NEW_VERSION=$(semver bump major $TAG_VERSION)
+            elif [[ steps.determine_version.outputs.version == 'minor' ]]; then
+              NEW_VERSION=$(semver bump minor $TAG_VERSION)
+            else
+              NEW_VERSION=$(semver bump patch $TAG_VERSION)
+            fi
+            echo "TAG=${{ github.ref }}/v${NEW_VERSION}" >> $GITHUB_ENV
+            echo $TAG
+
         - name: Create release
           id: create_release_id
           uses: actions/create-release@v1
