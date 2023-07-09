@@ -33,11 +33,11 @@ jobs:
         run: |
           COMMIT_MSG=$(git log --format=%B -n 1 ${{ github.sha }})
           if [[ $COMMIT_MSG =~ BREAKING|Breaking|breaking ]]; then
-            "bump_type=major" 
+            export bump_type=major 
           elif [[ $COMMIT_MSG =~ FEAT|feat ]]; then
-            "bump_type=minor" 
+            export bump_type=minor 
           else
-            "bump_type=patch" 
+            export bump_type=patch 
           fi
           echo "bump_type for this commit is $bump_type"
           echo "bump_type=$bump_type" >> $GIHUB_OUTPUT
