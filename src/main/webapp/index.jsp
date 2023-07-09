@@ -51,8 +51,8 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
     <div class="container">
-        <h1>Home</h1>
-        <p> A DevOpsGym </p>
+        <h1>DevOps Gym</h1>
+        <p> Build your DevOps Skills </p>
         <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
         <p><a class="btn btn-primary btn-lg" role="button">Success!! more &raquo;</a></p>
     </div>
