@@ -91,6 +91,7 @@ jobs:
 
       - name: Update image
         run: |
-          kubectl set image deployment/main devopsgym:$NEW_TAG    
+          kubectl set image deployment/main main-web=specialops/devopsgym:$NEW_TAG
+
 
 
