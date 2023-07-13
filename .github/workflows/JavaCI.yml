@@ -81,13 +81,19 @@ jobs:
         run: |
           docker build . -t specialops/devopsgym:$NEW_TAG
           docker push specialops/devopsgym:$NEW_TAG
+      - name: Set image name
+        id: set-image
+        env:
+          NEW_TAG: ${{ steps.new_version.outputs.NEW_TAG }}    
+        run: |
+          echo "IMAGE=specialops/devopsgym:$NEW_TAG" >> $GITHUB_OUTPUT
+
 
       - name: Update Kubectl 
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-          NEW_TAG: ${{ steps.new_version.outputs.NEW_TAG }}
-          IMAGE: "specialops/devopsgym:$NEW_TAG"
+          IMAGE: ${{ steps.set-image.outputs.IMAGE }}
         with:
           args: set image deployment/main main-web=$IMAGE
 
