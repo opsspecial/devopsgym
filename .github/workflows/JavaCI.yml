@@ -82,16 +82,13 @@ jobs:
           docker build . -t specialops/devopsgym:$NEW_TAG
           docker push specialops/devopsgym:$NEW_TAG
 
-      - name: Setup Kubectl 
+      - name: Update Kubectl 
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: get pods
+          args: set image deployment/main main-web=specialops/devopsgym:$NEW_TAG
 
-      - name: Update image
-        run: |
-          kubectl set image deployment/main main-web=specialops/devopsgym:$NEW_TAG
 
 
 
