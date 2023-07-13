@@ -81,18 +81,16 @@ jobs:
         run: |
           docker build . -t specialops/devopsgym:$NEW_TAG
           docker push specialops/devopsgym:$NEW_TAG
-  
-  # release:
-  #   runs-on: ubuntu-latest
-  #   needs: publish-image 
-  #   permissions: write-all
-  #   steps:     
-  #   - name: Create release
-  #     uses: actions/create-release@v1
-  #     env:
-  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     with:
-  #       tag_name: ${{ steps.new_version.outputs.new_version }}
-  #       release_name: Release ${{ steps.new_version.outputs.new_version }}
-  #       draft: false
-  #       prerelease: false
+
+      - name: Setup Kubectl 
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        with:
+          args: get pods
+
+      - name: Update image
+        run: |
+          kubectl set image deployment/main devopsgym:$NEW_TAG    
+
+

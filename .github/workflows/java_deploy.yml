@@ -9,53 +9,13 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v3 
 
-
-
-      - name: Download WAR artifact
+      - name: Setup Kubectl 
+        uses: actions-hub/kubectl@master
         env:
-          GITHUB_TOKEN: ${{ secrets.PKG_TOKEN }}
-        run: |
-          mkdir -p $HOME/petclinic/
-          VERSION=$(/home/azadmin/maven/bin/mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          GROUP_ID=$(/home/azadmin/maven/bin/mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-          ARTIFACT_ID=$(/home/azadmin/maven/bin/mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          ARTIFACT_NAME=${ARTIFACT_ID}-${VERSION}.war
-          REPO_URL="https://maven.pkg.github.com/opsspecial/petclinic" 
-          ARTIFACT_URL=${REPO_URL}/${GROUP_ID}/${ARTIFACT_ID}/${VERSION}/${ARTIFACT_NAME}
-          echo "Downloading artifact from: $ARTIFACT_URL"
-          curl -L $ARTIFACT_URL \
-               -H "Authorization: Bearer $GITHUB_TOKEN" \
-               -O
-          cp ${ARTIFACT_NAME} $HOME/petclinic/
-      - name: Set up Azure CLI
-        uses: azure/login@v1
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          args: get pods
 
-      - name: List VM IP Addresses
-        id: inventory
+      - name: Update image
         run: |
-          # Set the desired resource group and prefix
-          resourceGroup="petclinic-rg"
-          vmPrefix="web"
-          # Get the VM names matching the prefix
-          az vm list --resource-group petclinic-rg --show-details \
-          --query "[?contains(name, 'web')].[privateIps]" -otsv > /tmp/vms.txt
-          cat /tmp/vms.txt
-      - name: Download Private Key
-        env:
-          private_key_data: ${{ secrets.PRIVATE_KEY }}
-        run: |
-            echo $private_key_data | base64 -d > $HOME/privatekey.pem
-      - name: Upload Artifact to the target servers
-        run: |
-          cd $HOME/petclinic
-          artifact=$(ls -t *.war | head -n 1)
-          echo $artifact
-          while read vm 
-          do
-            echo "Copy Artifcat to $vm"
-            scp -i $HOME/privatekey.pem $artifact azadmin@$vm:~/petclinic.war
-            ssh -i $HOME/privatekey.pem azadmin@$vm -T 'sudo cp ~/petclinic.war /opt/tomcat8/webapps/'  < /dev/null          
-            echo "Completd Copying to $vm"
-          done< /tmp/vms.txt
+          kubectl set image deployment/main main=    
