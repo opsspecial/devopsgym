@@ -86,6 +86,7 @@ jobs:
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          NEW_TAG: ${{ steps.new_version.outputs.NEW_TAG }}
         with:
           args: set image deployment/main main-web=specialops/devopsgym:$NEW_TAG
 
