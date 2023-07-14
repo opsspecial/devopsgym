@@ -88,7 +88,6 @@ jobs:
         run: |
           echo "IMAGE=specialops/devopsgym:$NEW_TAG" >> $GITHUB_OUTPUT
 
-
       - name: Update Kubectl 
         uses: actions-hub/kubectl@master
         env:

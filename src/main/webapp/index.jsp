@@ -52,7 +52,7 @@
 <div class="jumbotron">
     <div class="container">
         <h1>DEVOPS GYM</h1>
-        <p> Build your DevOps skills </p>
+        <p> Build your Tech skills </p>
         <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
         <p><a class="btn btn-primary btn-lg" role="button">Success!! more &raquo;</a></p>
     </div>
