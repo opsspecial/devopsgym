@@ -88,13 +88,16 @@ jobs:
         run: |
           echo "IMAGE=specialops/devopsgym:$NEW_TAG" >> $GITHUB_OUTPUT
 
-      - name: Update Kubectl 
-        uses: actions-hub/kubectl@master
+      - name: Update Image
         env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-          IMAGE: ${{ steps.set-image.outputs.IMAGE }}
-        with:
-          args: set image deployment/main main-web=$IMAGE
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}     
+          NEW_TAG: ${{ steps.new_version.outputs.NEW_TAG }}
+        run: |
+          cat KUBE_CONFIG >> /tmp/kubeconfig
+          export KUBECONFIG=/tmp/kubeconfig
+          kubectl get nodes
+          kubectl set image deployment/main main-web=specialops/devopsgym:$NEW_TAG
+          
 
 
 
