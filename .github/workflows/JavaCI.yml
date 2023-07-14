@@ -93,7 +93,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}     
           NEW_TAG: ${{ steps.new_version.outputs.NEW_TAG }}
         run: |
-          cat KUBE_CONFIG >> /tmp/kubeconfig
+          echo $KUBE_CONFIG >> /tmp/kubeconfig
           export KUBECONFIG=/tmp/kubeconfig
           kubectl get nodes
           kubectl set image deployment/main main-web=specialops/devopsgym:$NEW_TAG
